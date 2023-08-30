@@ -1,13 +1,13 @@
 import uuid
 from typing import List, Optional
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, case
 from sqlalchemy.orm import sessionmaker
 
 from src.config.config import settings
 
-from src.entities.models.order_entity import order_factory, Order
-from src.entities.models.order_item_model import OrderItem, order_item_factory
+from src.entities.models.order_entity import order_factory, Order, OrderStatus
+from src.entities.models.order_item_entity import OrderItem, order_item_factory
 from src.gateways.orm.order_orm import Order_Items, Orders
 from src.interfaces.gateways.order_gateway_interface import IOrderGateway
 
@@ -44,7 +44,8 @@ class PostgresDBOrderRepository(IOrderGateway):
             items,
             order.creation_date,
             order.order_total,
-            order.status,
+            order.order_status,
+            order.payment_status,
         )
         return order
 
@@ -54,22 +55,24 @@ class PostgresDBOrderRepository(IOrderGateway):
             items_db = db.query(Order_Items).filter(Order_Items.order_id == order_id).all()
 
         if items_db:
-            items = self.items_to_entity(items_db)
+            items = self.items_to_entity(items_db)  # type: ignore
         else:
             items = []
 
         if order_db:
-            return self.order_to_entity(order_db, items)
+            return self.order_to_entity(order_db, items)  # type: ignore
         else:
             return None
 
     def get_order_item(self, order_id: uuid.UUID, product_id: uuid.UUID) -> Optional[OrderItem]:
         with SessionLocal() as db:
             item_db = db.query(Order_Items)\
-                .filter(Order_Items.order_id == order_id, Order_Items.product_id == product_id).first()
+                .filter(Order_Items.order_id == order_id,
+                        Order_Items.product_id == product_id)\
+                .first()
 
             if item_db:
-                return self.item_to_entity(item_db)
+                return self.item_to_entity(item_db)  # type: ignore
             else:
                 return None
 
@@ -79,9 +82,29 @@ class PostgresDBOrderRepository(IOrderGateway):
             orders = db.query(Orders).order_by(Orders.creation_date).all()
             if orders:
                 for order in orders:
-                    items_db = db.query(Order_Items).filter(Order_Items.order_id == order.order_id).all()
-                    items = self.items_to_entity(items_db)
-                    order_entity = self.order_to_entity(order, items)
+                    items_db = db.query(Order_Items).filter(Order_Items.order_id == order.order_id).all()  # type: ignore
+                    items = self.items_to_entity(items_db)  # type: ignore
+                    order_entity = self.order_to_entity(order, items)  # type: ignore
+                    result.append(order_entity)
+        return result
+
+    def list_ongoing_orders(self) -> List[Order]:
+        result = []
+        with SessionLocal() as db:
+            orders = db.query(Orders)\
+                .filter(Orders.order_status.not_in(['Finalizado', 'Pendente']))\
+                .order_by(case(
+                        (Orders.order_status == OrderStatus.READY, 1),  # type: ignore
+                        (Orders.order_status == OrderStatus.IN_PROGRESS, 2),  # type: ignore
+                        (Orders.order_status == OrderStatus.CONFIRMED, 3),  # type: ignore
+                        else_=4))\
+                .all()
+
+            if orders:
+                for order in orders:
+                    items_db = db.query(Order_Items).filter(Order_Items.order_id == order.order_id).all()  # type: ignore
+                    items = self.items_to_entity(items_db)  # type: ignore
+                    order_entity = self.order_to_entity(order, items)  # type: ignore
                     result.append(order_entity)
         return result
 
@@ -123,7 +146,7 @@ class PostgresDBOrderRepository(IOrderGateway):
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
-            print(self.items_to_entity([db_obj]))
+            print(self.items_to_entity([db_obj]))  # type: ignore
 
     def update(self, order_id: uuid.UUID, obj_in: Order) -> Order:
         order_in = vars(obj_in)
@@ -140,8 +163,8 @@ class PostgresDBOrderRepository(IOrderGateway):
         with SessionLocal() as db:
             items_db = db.query(Order_Items).filter(Order_Items.order_id == order_id).all()
 
-        items = self.items_to_entity(items_db)
-        updated_order = self.order_to_entity(db_obj, items)
+        items = self.items_to_entity(items_db)  # type: ignore
+        updated_order = self.order_to_entity(db_obj, items)  # type: ignore
         return updated_order
 
     def remove_order(self, order_id: uuid.UUID) -> None:

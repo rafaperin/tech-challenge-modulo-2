@@ -21,7 +21,8 @@ create table if not exists orders (
 	customer_id uuid not null,
     creation_date timestamp default now(),
     order_total decimal(7,2),
-    status varchar(20) not null
+    order_status varchar(30) not null,
+    payment_status varchar(30) not null
 );
 
 create table if not exists order_items (

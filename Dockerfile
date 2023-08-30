@@ -28,6 +28,6 @@ RUN chown -R app:app /src
 
 USER app
 
-WORKDIR /src/adapters
+WORKDIR /src
 
 CMD ["uvicorn", "app:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

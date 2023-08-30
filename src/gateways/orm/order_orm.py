@@ -8,7 +8,8 @@ class Orders(Base):
     customer_id = Column(UUID, nullable=False)
     creation_date = Column(DateTime(timezone=True), server_default=func.now())
     order_total = Column(DECIMAL(7, 2), nullable=True)
-    status = Column(String(30), nullable=False)
+    order_status = Column(String(30), nullable=False)
+    payment_status = Column(String(30), nullable=False)
 
 
 class Order_Items(Base):

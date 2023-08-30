@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.entities.models.order_entity import Order
-from src.entities.models.order_item_model import OrderItem
+from src.entities.models.order_item_entity import OrderItem
 
 
 class IOrderGateway(ABC):
@@ -17,6 +17,10 @@ class IOrderGateway(ABC):
 
     @abstractmethod
     def get_all(self) -> List[Order]:
+        pass
+
+    @abstractmethod
+    def list_ongoing_orders(self) -> List[Order]:
         pass
 
     @abstractmethod

@@ -29,6 +29,23 @@ async def get_all_orders() -> dict:
 
 
 @router.get(
+    "/orders/ongoing", tags=["Orders"],
+    response_model=OrderDTOListResponse,
+    status_code=status.HTTP_200_OK,
+    responses={400: {"model": APIErrorMessage},
+               404: {"model": APIErrorMessage},
+               500: {"model": APIErrorMessage}}
+)
+async def list_ongoing_orders() -> dict:
+    try:
+        result = await OrderController.list_ongoing_orders()
+    except Exception:
+        raise RepositoryError.get_operation_failed()
+
+    return result
+
+
+@router.get(
     "/orders/id/{order_id}", tags=["Orders"],
     response_model=OrderDTOResponse,
     status_code=status.HTTP_200_OK,
@@ -113,8 +130,8 @@ async def change_order_item_quantity(
     return result
 
 
-@router.post(
-    "/orders/{order_id}/confirmation", tags=["Orders"],
+@router.put(
+    "/orders/{order_id}/checkout", tags=["Orders"],
     response_model=OrderDTOResponse,
     status_code=status.HTTP_201_CREATED,
     responses={400: {"model": APIErrorMessage},
@@ -126,6 +143,63 @@ async def confirm_order(
 ) -> dict:
     try:
         result = await OrderController.confirm_order(order_id)
+    except Exception:
+        raise RepositoryError.save_operation_failed()
+
+    return result
+
+
+@router.put(
+    "/orders/{order_id}/in-progress", tags=["Orders"],
+    response_model=OrderDTOResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={400: {"model": APIErrorMessage},
+               404: {"model": APIErrorMessage},
+               500: {"model": APIErrorMessage}}
+)
+async def order_in_progress(
+    order_id: uuid.UUID
+) -> dict:
+    try:
+        result = await OrderController.change_order_status_in_progress(order_id)
+    except Exception:
+        raise RepositoryError.save_operation_failed()
+
+    return result
+
+
+@router.put(
+    "/orders/{order_id}/ready", tags=["Orders"],
+    response_model=OrderDTOResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={400: {"model": APIErrorMessage},
+               404: {"model": APIErrorMessage},
+               500: {"model": APIErrorMessage}}
+)
+async def order_ready(
+    order_id: uuid.UUID
+) -> dict:
+    try:
+        result = await OrderController.change_order_status_ready(order_id)
+    except Exception:
+        raise RepositoryError.save_operation_failed()
+
+    return result
+
+
+@router.put(
+    "/orders/{order_id}/finalized", tags=["Orders"],
+    response_model=OrderDTOResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={400: {"model": APIErrorMessage},
+               404: {"model": APIErrorMessage},
+               500: {"model": APIErrorMessage}}
+)
+async def order_finalized(
+    order_id: uuid.UUID
+) -> dict:
+    try:
+        result = await OrderController.change_order_status_ready(order_id)
     except Exception:
         raise RepositoryError.save_operation_failed()
 

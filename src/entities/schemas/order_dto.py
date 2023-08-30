@@ -2,8 +2,6 @@ import datetime
 import uuid
 from typing import Optional, List
 
-from pydantic import BaseModel
-
 from src.utils.utils import CamelModel
 
 
@@ -73,7 +71,8 @@ class OrderDTO(CamelModel):
     order_items: List[OrderItemsDTO]
     creation_date: datetime.datetime
     order_total: Optional[float]
-    status: str
+    order_status: str
+    payment_status: str
 
     class Config:
         schema_extra = {
@@ -89,7 +88,8 @@ class OrderDTO(CamelModel):
                 ],
                 "creation_date": "2022-12-27 08:26:49.219717",
                 "order_total": 0.0,
-                "status": "Pending",
+                "order_status": "Pending",
+                "payment_status": "Pending",
             }
         }
 

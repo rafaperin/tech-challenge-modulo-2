@@ -31,6 +31,20 @@ class OrderController:
         return {"result": result}
 
     @staticmethod
+    async def list_ongoing_orders() -> dict:
+        order_gateway = PostgresDBOrderRepository()
+        product_gateway = PostgresDBProductRepository()
+
+        try:
+            ongoing_orders = OrderUseCase(order_gateway, product_gateway).list_ongoing_orders()
+            result = order_list_to_json(ongoing_orders)
+        except Exception as e:
+            print(e)
+            raise RepositoryError.get_operation_failed()
+
+        return {"result": result}
+
+    @staticmethod
     async def get_order_by_id(
         order_id: uuid.UUID
     ) -> dict:
@@ -108,6 +122,51 @@ class OrderController:
 
         try:
             order = OrderUseCase(order_gateway, product_gateway).confirm_order(order_id)
+            result = order_to_json(order)
+        except Exception:
+            raise RepositoryError.save_operation_failed()
+
+        return {"result": result}
+
+    @staticmethod
+    async def change_order_status_in_progress(
+        order_id: uuid.UUID
+    ) -> dict:
+        order_gateway = PostgresDBOrderRepository()
+        product_gateway = PostgresDBProductRepository()
+
+        try:
+            order = OrderUseCase(order_gateway, product_gateway).change_order_status_in_progress(order_id)
+            result = order_to_json(order)
+        except Exception:
+            raise RepositoryError.save_operation_failed()
+
+        return {"result": result}
+
+    @staticmethod
+    async def change_order_status_ready(
+        order_id: uuid.UUID
+    ) -> dict:
+        order_gateway = PostgresDBOrderRepository()
+        product_gateway = PostgresDBProductRepository()
+
+        try:
+            order = OrderUseCase(order_gateway, product_gateway).change_order_status_ready(order_id)
+            result = order_to_json(order)
+        except Exception:
+            raise RepositoryError.save_operation_failed()
+
+        return {"result": result}
+
+    @staticmethod
+    async def change_order_status_finalized(
+        order_id: uuid.UUID
+    ) -> dict:
+        order_gateway = PostgresDBOrderRepository()
+        product_gateway = PostgresDBProductRepository()
+
+        try:
+            order = OrderUseCase(order_gateway, product_gateway).change_order_status_finalized(order_id)
             result = order_to_json(order)
         except Exception:
             raise RepositoryError.save_operation_failed()

@@ -4,7 +4,7 @@ from src.config.errors import ResourceNotFound
 
 from src.entities.schemas.order_dto import CreateOrderDTO, UpdateOrderItemDTO, CreateOrderItemDTO
 from src.entities.models.order_entity import Order
-from src.entities.models.order_item_model import OrderItem
+from src.entities.models.order_item_entity import OrderItem
 from src.interfaces.gateways.order_gateway_interface import IOrderGateway
 from src.interfaces.gateways.product_gateway_interface import IProductGateway
 from src.interfaces.use_cases.order_usecase_interface import OrderUseCaseInterface
@@ -24,6 +24,9 @@ class OrderUseCase(OrderUseCaseInterface):
 
     def get_all(self):
         return self._order_repo.get_all()
+
+    def list_ongoing_orders(self):
+        return self._order_repo.list_ongoing_orders()
 
     def create_order(self, input_dto: CreateOrderDTO) -> Order:
         order = Order.create_new_order(input_dto.customer_id)
@@ -68,9 +71,27 @@ class OrderUseCase(OrderUseCaseInterface):
         updated_order = self._order_repo.update(order_id, order)
         return updated_order
 
+    def change_order_status_in_progress(self, order_id: uuid.UUID) -> Order:
+        order = self._order_repo.get_by_id(order_id)
+        order.order_in_progress()
+        updated_order = self._order_repo.update(order_id, order)
+        return updated_order
+
+    def change_order_status_ready(self, order_id: uuid.UUID) -> Order:
+        order = self._order_repo.get_by_id(order_id)
+        order.order_ready()
+        updated_order = self._order_repo.update(order_id, order)
+        return updated_order
+
+    def change_order_status_finalized(self, order_id: uuid.UUID) -> Order:
+        order = self._order_repo.get_by_id(order_id)
+        order.order_finalized()
+        updated_order = self._order_repo.update(order_id, order)
+        return updated_order
+
     def remove_order(self, order_id: uuid.UUID) -> None:
         order = self._order_repo.get_by_id(order_id)
-        order.check_if_pending()
+        order.check_if_pending_order()
         self._order_repo.remove_order(order_id)
 
     def remove_order_item(self, order_id: uuid.UUID, product_id: uuid.UUID) -> Order:

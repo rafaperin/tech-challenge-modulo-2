@@ -1,7 +1,7 @@
 from typing import List
 
 from src.entities.models.order_entity import Order
-from src.entities.models.order_item_model import OrderItem
+from src.entities.models.order_item_entity import OrderItem
 from src.utils.utils import camelize_dict
 
 

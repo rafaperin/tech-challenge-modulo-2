@@ -4,18 +4,17 @@ version = "0.1.0"
 description = ""
 authors = ["Rafael <rafaelpfer@hotmail.com>"]
 readme = "README.md"
-packages = [{include = "tech_challenge_modulo_1"}]
+packages = [{include = "tech_challenge_modulo_2"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-fastapi = "0.98.0"
-sqlalchemy = "^2.0.16"
+fastapi = "0.103.0"
+sqlalchemy = "2.0.20"
 python-dotenv = "^1.0.0"
 kink = "^0.6.6"
-uvicorn = "0.22.0"
+uvicorn = "0.23.2"
 psycopg2-binary = "^2.9.6"
-pydantic = {extras = ["email"], version = "^1.10.12"}
-pyhumps = "^3.8.0"
+pydantic = {extras = ["email"], version = "2.3.0"}
 
 
 [build-system]
