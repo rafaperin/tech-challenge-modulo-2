@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
+from starlette import status
 
 from src.config.errors import APIErrorMessage, DomainError, RepositoryError, ResourceNotFound
 from src.api.customer_api import router as customers_router
@@ -59,6 +60,13 @@ def custom_openapi() -> Dict[str, Any]:
 
 
 app.openapi = custom_openapi  # type: ignore
+
+
+@app.get("/health-check", tags=["Health"],
+         status_code=status.HTTP_200_OK)
+def health_check() -> dict:
+    return {"result": "Service is online"}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
