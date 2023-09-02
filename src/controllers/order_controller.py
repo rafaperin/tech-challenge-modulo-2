@@ -7,6 +7,7 @@ from src.adapters.order_json_adapter import order_list_to_json, order_to_json, o
     order_item_list_to_json
 from src.config.errors import RepositoryError, ResourceNotFound, DomainError
 from src.entities.errors.order_item_error import OrderItemError
+from src.entities.models.order_entity import PaymentStatus
 from src.entities.schemas.order_dto import CreateOrderDTO, CreateOrderItemDTO, UpdateOrderItemDTO, RemoveOrderItemDTO
 from src.gateways.orm.order_orm import Orders, Order_Items
 from src.gateways.postgres_gateways.order_gateway import PostgresDBOrderRepository
@@ -115,7 +116,8 @@ class OrderController:
 
     @staticmethod
     async def confirm_order(
-        order_id: uuid.UUID
+        order_id: uuid.UUID,
+        qr_code: str
     ) -> dict:
         order_gateway = PostgresDBOrderRepository()
         product_gateway = PostgresDBProductRepository()
@@ -124,6 +126,23 @@ class OrderController:
             order = OrderUseCase(order_gateway, product_gateway).confirm_order(order_id)
             result = order_to_json(order)
         except Exception:
+            raise RepositoryError.save_operation_failed()
+
+        return {"result": result}
+
+    @staticmethod
+    async def confirm_payment(
+        order_id: uuid.UUID,
+        status: str
+    ) -> dict:
+        order_gateway = PostgresDBOrderRepository()
+        product_gateway = PostgresDBProductRepository()
+
+        try:
+            order = OrderUseCase(order_gateway, product_gateway).confirm_payment(order_id, status)
+            result = order_to_json(order)
+        except Exception as e:
+            print(e)
             raise RepositoryError.save_operation_failed()
 
         return {"result": result}

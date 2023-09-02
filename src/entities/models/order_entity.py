@@ -50,13 +50,16 @@ class Order:
             raise OrderError("Order already confirmed, modification not allowed!")
 
     def check_payment_status(self) -> None:
-        if self.payment_status is PaymentStatus.PENDING:
+        if self.payment_status == PaymentStatus.PENDING:
             raise OrderError("Order payment id pending!")
-        if self.payment_status is PaymentStatus.REFUSED:
+        if self.payment_status == PaymentStatus.REFUSED:
             raise OrderError("Order payment was refused! Please contact your payment provider.")
 
-    def confirm_payment(self) -> None:
-        if self.order_status is OrderStatus.CONFIRMED:
+    def confirm_payment(self, status: str) -> None:
+        print(self.order_status, OrderStatus.CONFIRMED)
+        print(status)
+        if self.order_status == OrderStatus.CONFIRMED and status == "approved":
+            print("oi")
             self.payment_status = PaymentStatus.CONFIRMED
         else:
             raise OrderError("Order not yet confirmed!")
@@ -91,24 +94,24 @@ class Order:
         self.order_status = OrderStatus.CONFIRMED
 
     def order_in_progress(self) -> None:
-        if self.order_status is OrderStatus.CONFIRMED:
+        if self.order_status == OrderStatus.CONFIRMED:
             self.check_payment_status()
             self.order_status = OrderStatus.IN_PROGRESS
-        elif self.order_status is OrderStatus.PENDING:
+        elif self.order_status == OrderStatus.PENDING:
             raise OrderError("Order not yet confirmed!")
         else:
             raise OrderError("Order already in progress!")
 
     def order_ready(self) -> None:
-        if self.order_status is OrderStatus.IN_PROGRESS:
+        if self.order_status == OrderStatus.IN_PROGRESS:
             self.order_status = OrderStatus.READY
-        elif self.order_status is OrderStatus.CONFIRMED or self.order_status is OrderStatus.PENDING:
+        elif self.order_status == OrderStatus.CONFIRMED or self.order_status == OrderStatus.PENDING:
             raise OrderError("Order not yet in progress!")
         else:
             raise OrderError("Order already ready!")
 
     def order_finalized(self) -> None:
-        if self.order_status is OrderStatus.READY:
+        if self.order_status == OrderStatus.READY:
             self.order_status = OrderStatus.FINALIZED
         else:
             raise OrderError("Order not yet ready!")

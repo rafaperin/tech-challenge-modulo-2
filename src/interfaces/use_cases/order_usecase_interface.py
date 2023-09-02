@@ -1,7 +1,7 @@
 import uuid
 from abc import ABC
 
-from src.entities.models.order_entity import Order
+from src.entities.models.order_entity import Order, PaymentStatus
 from src.entities.models.order_item_entity import OrderItem
 from src.entities.schemas.order_dto import CreateOrderDTO, CreateOrderItemDTO
 from src.interfaces.gateways.order_gateway_interface import IOrderGateway
@@ -33,6 +33,9 @@ class OrderUseCaseInterface(ABC):
         pass
 
     def confirm_order(self, order_id: uuid.UUID) -> Order:
+        pass
+
+    def confirm_payment(self, order_id: uuid.UUID, status: str) -> Order:
         pass
 
     def change_order_status_in_progress(self, order_id: uuid.UUID) -> Order:

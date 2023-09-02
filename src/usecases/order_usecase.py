@@ -3,7 +3,7 @@ import uuid
 from src.config.errors import ResourceNotFound
 
 from src.entities.schemas.order_dto import CreateOrderDTO, UpdateOrderItemDTO, CreateOrderItemDTO
-from src.entities.models.order_entity import Order
+from src.entities.models.order_entity import Order, PaymentStatus
 from src.entities.models.order_item_entity import OrderItem
 from src.interfaces.gateways.order_gateway_interface import IOrderGateway
 from src.interfaces.gateways.product_gateway_interface import IProductGateway
@@ -68,6 +68,12 @@ class OrderUseCase(OrderUseCaseInterface):
     def confirm_order(self, order_id: uuid.UUID) -> Order:
         order = self._order_repo.get_by_id(order_id)
         order.confirm_order()
+        updated_order = self._order_repo.update(order_id, order)
+        return updated_order
+
+    def confirm_payment(self, order_id: uuid.UUID, status: str) -> Order:
+        order = self._order_repo.get_by_id(order_id)
+        order.confirm_payment(status)
         updated_order = self._order_repo.update(order_id, order)
         return updated_order
 
