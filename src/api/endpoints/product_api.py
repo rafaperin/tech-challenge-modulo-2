@@ -2,7 +2,8 @@ import uuid
 
 from fastapi import APIRouter, status
 
-from src.config.errors import APIErrorMessage, RepositoryError, ResourceNotFound
+from src.api.errors.api_errors import APIErrorMessage
+from src.config.errors import RepositoryError, ResourceNotFound
 from src.controllers.product_controller import ProductController
 from src.entities.schemas.product_dto import ProductDTOListResponse, ProductDTOResponse, CreateProductDTO, \
     ChangeProductDTO

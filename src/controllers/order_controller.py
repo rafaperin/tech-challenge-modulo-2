@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from sqlalchemy.orm import Session
 
 from src.adapters.order_json_adapter import order_list_to_json, order_to_json, order_item_to_json, \
-    order_item_list_to_json
+    order_item_list_to_json, order_with_qrcode_to_json
 from src.config.errors import RepositoryError, ResourceNotFound, DomainError
 from src.entities.errors.order_item_error import OrderItemError
 from src.entities.models.order_entity import PaymentStatus
@@ -124,7 +124,7 @@ class OrderController:
 
         try:
             order = OrderUseCase(order_gateway, product_gateway).confirm_order(order_id)
-            result = order_to_json(order)
+            result = order_with_qrcode_to_json(order, qr_code)
         except Exception:
             raise RepositoryError.save_operation_failed()
 

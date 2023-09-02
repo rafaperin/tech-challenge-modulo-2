@@ -19,6 +19,11 @@ def order_to_json(order: Order):
     return order_json
 
 
+def order_with_qrcode_to_json(order: Order, qr_code: str):
+    order_json = order_to_json(order)
+    return {"order": order_json, "qrCode": qr_code}
+
+
 def order_list_to_json(order_list: List[Order]):
     return [order_to_json(order) for order in order_list]
 

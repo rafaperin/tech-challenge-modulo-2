@@ -1,39 +1,23 @@
-import json
 import uuid
-import httpx
 from fastapi import APIRouter, Request, status
 
-from src.config.errors import APIErrorMessage, RepositoryError, ResourceNotFound, DomainError
+from src.api.errors.api_errors import APIErrorMessage
+from src.config.errors import RepositoryError, ResourceNotFound, DomainError
 from src.controllers.order_controller import OrderController
-from src.controllers.product_controller import ProductController
 from src.entities.errors.order_item_error import OrderItemError
 from src.entities.schemas.order_dto import OrderDTOListResponse, OrderDTOResponse, CreateOrderDTO, CreateOrderItemDTO, \
-    UpdateOrderItemDTO, RemoveOrderItemDTO
+    UpdateOrderItemDTO, RemoveOrderItemDTO, OrderWithQrCodeDTOResponse
+from src.external.mercado_pago_api import MercadoPagoAPI
 
 router = APIRouter()
 
 
-@router.post("/webhook")
-async def webhook_received(request: Request):
+@router.post("/webhook", tags=["Webhook"])
+async def payment_webhook(request: Request):
     json_req = await request.json()
     params = list(request.query_params.values())
 
-    if params[1] == 'merchant_order':
-        url = json_req["resource"]
-        headers = {"Authorization": "Bearer APP_USR-2598238696055751-090212-6c7c340484abe79170a7037e08467d22-1467637782"}
-        r = httpx.get(url, headers=headers)
-
-        result = json.loads(r.content)
-        if result["status"] == "closed":
-            order_id = result["external_reference"]
-            payment_status = result["payments"][0]["status"]
-
-            try:
-                result = await OrderController.confirm_payment(order_id, payment_status)
-            except Exception:
-                raise RepositoryError.get_operation_failed()
-
-            return result
+    await MercadoPagoAPI.check_payment_approval(json_req, params)
 
 
 @router.get(
@@ -157,7 +141,7 @@ async def change_order_item_quantity(
 
 @router.put(
     "/orders/{order_id}/checkout", tags=["Orders"],
-    response_model=OrderDTOResponse,
+    response_model=OrderWithQrCodeDTOResponse,
     status_code=status.HTTP_201_CREATED,
     responses={400: {"model": APIErrorMessage},
                404: {"model": APIErrorMessage},
@@ -168,41 +152,11 @@ async def confirm_order(
 ) -> dict:
     try:
         order = await OrderController.get_order_by_id(order_id)
+        qr_code = await MercadoPagoAPI.create_order_on_mercado_pago(order)
 
-        url = "https://api.mercadopago.com/instore/orders/qr/seller/collectors/1467637782/pos/LOJA001POS001/qrs"
-        headers = {
-            "Authorization": "Bearer APP_USR-2598238696055751-090212-6c7c340484abe79170a7037e08467d22-1467637782"
-        }
-
-        items = []
-        for item in order["result"]["orderItems"]:
-            product = await ProductController.get_product_by_id(item["productId"])
-            order_item = {
-                "sku_number": str(product["productId"]),
-                "category": product["category"],
-                "title": product["name"],
-                "description": product["description"],
-                "unit_price": float(product["price"]),
-                "quantity": item["productQuantity"],
-                "unit_measure": "unit",
-                "total_amount": float(product["price"] * item["productQuantity"])
-            }
-            items.append(order_item)
-
-        params = {
-          "external_reference": str(order_id),
-          "total_amount": float(order["result"]["orderTotal"]),
-          "items": items,
-          "title": str(order_id),
-          "description": f"Pedido {order_id}",
-          "notification_url": "https://lasting-partly-trout.ngrok-free.app/webhook"
-        }
-        r = httpx.post(url, headers=headers, json=params)
-        json_response = json.loads(r.content)
-
-        result = await OrderController.confirm_order(order_id, json_response["qr_data"])
-    except Exception as e:
-        print(e)
+        result = await OrderController.confirm_order(order_id, qr_code)
+    except Exception as er:
+        print(er)
         raise RepositoryError.save_operation_failed()
 
     return result
@@ -258,7 +212,7 @@ async def order_finalized(
     order_id: uuid.UUID
 ) -> dict:
     try:
-        result = await OrderController.change_order_status_ready(order_id)
+        result = await OrderController.change_order_status_finalized(order_id)
     except Exception:
         raise RepositoryError.save_operation_failed()
 

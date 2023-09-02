@@ -31,6 +31,10 @@ services:
       POSTGRES_DB: "postgres"
       POSTGRES_HOST: "postgres:5432"
       ENVIRONMENT: "dev"
+      WEBHOOK_BASE_URL: "https://lasting-partly-trout.ngrok-free.app"
+      MERCADO_PAGO_ACCESS_TOKEN: "APP_USR-2598238696055751-090212-6c7c340484abe79170a7037e08467d22-1467637782"
+      MERCADO_PAGO_USER_ID: "1467637782"
+      MERCADO_PAGO_EXTERNAL_POS_ID: "LOJA001POS001"
     ports:
       - "8000:8000"
     networks:

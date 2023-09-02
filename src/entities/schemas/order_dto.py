@@ -109,5 +109,14 @@ class OrderDTOResponse(CamelModel):
     result: OrderDTO
 
 
+class OrderWithQrCodeDTO(CamelModel):
+    order: OrderDTO
+    qr_code: str
+
+
+class OrderWithQrCodeDTOResponse(CamelModel):
+    result: OrderWithQrCodeDTO
+
+
 class OrderDTOListResponse(CamelModel):
     result: List[OrderDTO]

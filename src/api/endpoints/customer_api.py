@@ -3,7 +3,8 @@ from typing import Any
 
 from fastapi import APIRouter, status
 
-from src.config.errors import APIErrorMessage, RepositoryError, ResourceNotFound
+from src.api.errors.api_errors import APIErrorMessage
+from src.config.errors import RepositoryError, ResourceNotFound
 from src.controllers.customer_controller import CustomerController
 from src.entities.schemas.customer_dto import CustomerDTOResponse, CreateCustomerDTO, \
     ChangeCustomerDTO, CustomerDTOListResponse

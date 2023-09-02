@@ -32,6 +32,10 @@ class PostgresDBSettings(BaseSettings):
 
 class Settings(BaseSettings):
     ENVIRONMENT: str
+    WEBHOOK_BASE_URL: str
+    MERCADO_PAGO_ACCESS_TOKEN: str
+    MERCADO_PAGO_USER_ID: str
+    MERCADO_PAGO_EXTERNAL_POS_ID: str
 
     db: PostgresDBSettings = PostgresDBSettings()
 

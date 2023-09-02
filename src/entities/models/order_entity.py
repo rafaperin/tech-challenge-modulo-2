@@ -56,10 +56,7 @@ class Order:
             raise OrderError("Order payment was refused! Please contact your payment provider.")
 
     def confirm_payment(self, status: str) -> None:
-        print(self.order_status, OrderStatus.CONFIRMED)
-        print(status)
         if self.order_status == OrderStatus.CONFIRMED and status == "approved":
-            print("oi")
             self.payment_status = PaymentStatus.CONFIRMED
         else:
             raise OrderError("Order not yet confirmed!")

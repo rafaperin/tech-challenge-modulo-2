@@ -3,19 +3,21 @@ from typing import Any, Dict
 import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from fastapi.requests import Request
-from fastapi.responses import JSONResponse
-from starlette import status
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
-from src.config.errors import APIErrorMessage, DomainError, RepositoryError, ResourceNotFound
-from src.api.customer_api import router as customers_router
-from src.api.product_api import router as products_router
-from src.api.order_api import router as orders_router
+from src.api.endpoints.customer_api import router as customers_router
+from src.api.endpoints.product_api import router as products_router
+from src.api.endpoints.order_api import router as orders_router
+from src.api.endpoints.health_api import router as health_router
+from src.api.errors.api_errors import APIErrorMessage
+from src.config.errors import DomainError, ResourceNotFound, RepositoryError
 
 app = FastAPI()
 app.include_router(customers_router)
 app.include_router(products_router)
 app.include_router(orders_router)
+app.include_router(health_router)
 
 
 @app.exception_handler(DomainError)
@@ -49,7 +51,7 @@ def custom_openapi() -> Dict[str, Any]:
         return app.openapi_schema  # type: ignore
 
     openapi_schema = get_openapi(
-        title="Tech Challenge - Módulo 1",
+        title="Tech Challenge - Módulo 2",
         version="1.0.0",
         description="API para lanchonete do Tech Challenge",
         routes=app.routes,
@@ -60,13 +62,6 @@ def custom_openapi() -> Dict[str, Any]:
 
 
 app.openapi = custom_openapi  # type: ignore
-
-
-@app.get("/health-check", tags=["Health"],
-         status_code=status.HTTP_200_OK)
-def health_check() -> dict:
-    return {"result": "Service is online"}
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)

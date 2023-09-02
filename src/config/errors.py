@@ -1,6 +1,3 @@
-from pydantic import BaseModel
-
-
 class DomainError(Exception):
     pass
 
@@ -19,8 +16,3 @@ class RepositoryError(DomainError):
     @classmethod
     def get_operation_failed(cls) -> "RepositoryError":
         return cls("An error occurred while retrieving the data from the database!")
-
-
-class APIErrorMessage(BaseModel):
-    type: str
-    message: str
