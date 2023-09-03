@@ -41,5 +41,25 @@ spec:
             secretKeyRef:
               name: tech-challenge-secret
               key: POSTGRES_DB
+        - name: WEBHOOK_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: tech-challenge-app-config
+              key: WEBHOOK_BASE_URL
+        - name: MERCADO_PAGO_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: tech-challenge-secret
+              key: MERCADO_PAGO_ACCESS_TOKEN
+        - name: MERCADO_PAGO_USER_ID
+          valueFrom:
+            secretKeyRef:
+              name: tech-challenge-secret
+              key: MERCADO_PAGO_USER_ID
+        - name: MERCADO_PAGO_EXTERNAL_POS_ID
+          valueFrom:
+            secretKeyRef:
+              name: tech-challenge-secret
+              key: MERCADO_PAGO_EXTERNAL_POS_ID
         ports:
         - containerPort: 8000

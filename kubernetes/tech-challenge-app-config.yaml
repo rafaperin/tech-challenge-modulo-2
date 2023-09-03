@@ -5,3 +5,4 @@ metadata:
 data:
   POSTGRES_HOST: tech-challenge-db-service
   ENVIRONMENT: dev
+  WEBHOOK_BASE_URL: https://lasting-partly-trout.ngrok-free.app
