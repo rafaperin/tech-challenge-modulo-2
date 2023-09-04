@@ -4,6 +4,15 @@ Projeto criado com o objetivo de entregar o desafio proposto pelo Curso de Softw
 
 Este projeto tem como objetivo implementar as melhores práticas de desenvolvimento e arquitetura de código. Nesta etapa do projeto estamos utilizando a Arquitetura Limpa, com base nos requisitos levantados pelas práticas de Domain Driven Design aplicadas no módulo 1 [Event Storming](https://miro.com/app/board/uXjVM44WnuU=/?share_link_id=199664765180). (Este quadro é privado, para obter acesso basta entrar em contato com um dos membros da equipe).
 
+O app está integrado com a API de QR Code Dinâmico do MercadoPago para realização do pagamento dos pedidos.
+
+<p>
+    <img  src=content/MercadoPago.jpeg>
+</p>
+
+IMPORTANTE: Para funcionamento desta etapa utilizamos o NGROK para expôr o endpoint localhost de nossa API. Notamos um comportamento inusitado do minikube na plataforma Linux em que o mesmo não estava roteando os pods para localhost, e sim para um ip interno da rede. Quando isso acontece, não é possível testar o webhook utilizando o NGROK. Ao rodarmos o projeto localmente ou via Docker, o app funciona como esperado.
+
+
 ## Autores
 - Rafael Perin - RM349501
 - Lucas Gabriel - RM349527
