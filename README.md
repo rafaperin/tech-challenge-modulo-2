@@ -39,7 +39,13 @@ Caso tenha o desejo de executar a aplicação via Insomnia ou Postman, é possí
 
 # Infraestrutura
 
-Este repositório contém os arquivos de configuração e implantação para um aplicativo e banco de dados no diretório `kubernetes`. Os comandos e arquivos Kubernetes a seguir são usados para implantar e gerenciar esses recursos no cluster Kubernetes.
+Este repositório contém os arquivos de configuração e implantação para um aplicativo e banco de dados no diretório `kubernetes`. 
+
+IMPORTANTE: Para que a integração com o MercadoPago funcione corretamente é necessário que a aplicação esteja rodando em um servidor com IP público para que o webhook possa ser acessado corretamente.
+Alternativamente, é possível utilizar o [ngrok](https://ngrok.com/) para criar um túnel para o servidor local, caso seja necessário rodar a aplicação em `localhost`.
+Dentro do script `kubernetes/tech-challenge-app-config.yaml` é possível alterar a variável de ambiente `WEBHOOK_URL` para o endereço correto.
+
+Os comandos e arquivos Kubernetes a seguir são usados para implantar e gerenciar esses recursos no cluster Kubernetes.
 
 ## Implantação do Aplicativo
 

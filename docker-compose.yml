@@ -4,9 +4,9 @@ services:
     image: postgres:alpine
     container_name: tech-challenge-db
     environment:
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "admin"
-      POSTGRES_DB: "postgres"
+      POSTGRES_USER: ""
+      POSTGRES_PASSWORD: ""
+      POSTGRES_DB: ""
     volumes:
       - ./create_tables.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
@@ -26,15 +26,15 @@ services:
       dockerfile: Dockerfile
     container_name: tech-challenge-app
     environment:
-      POSTGRES_USER: "admin"
-      POSTGRES_PASS: "admin"
-      POSTGRES_DB: "postgres"
-      POSTGRES_HOST: "postgres:5432"
-      ENVIRONMENT: "dev"
-      WEBHOOK_BASE_URL: "https://lasting-partly-trout.ngrok-free.app"
-      MERCADO_PAGO_ACCESS_TOKEN: "APP_USR-2598238696055751-090212-6c7c340484abe79170a7037e08467d22-1467637782"
-      MERCADO_PAGO_USER_ID: "1467637782"
-      MERCADO_PAGO_EXTERNAL_POS_ID: "LOJA001POS001"
+      POSTGRES_USER: ""
+      POSTGRES_PASS: ""
+      POSTGRES_DB: ""
+      POSTGRES_HOST: ""
+      ENVIRONMENT: ""
+      WEBHOOK_BASE_URL: ""
+      MERCADO_PAGO_ACCESS_TOKEN: ""
+      MERCADO_PAGO_USER_ID: ""
+      MERCADO_PAGO_EXTERNAL_POS_ID: ""
     ports:
       - "8000:8000"
     networks:
