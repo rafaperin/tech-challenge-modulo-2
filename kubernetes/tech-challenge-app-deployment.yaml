@@ -63,3 +63,9 @@ spec:
               key: MERCADO_PAGO_EXTERNAL_POS_ID
         ports:
         - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /health-check
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20

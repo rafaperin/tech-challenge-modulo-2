@@ -39,8 +39,7 @@ class OrderController:
         try:
             ongoing_orders = OrderUseCase(order_gateway, product_gateway).list_ongoing_orders()
             result = order_list_to_json(ongoing_orders)
-        except Exception as e:
-            print(e)
+        except Exception:
             raise RepositoryError.get_operation_failed()
 
         return {"result": result}
@@ -71,8 +70,9 @@ class OrderController:
 
         try:
             order = OrderUseCase(order_gateway, product_gateway).create_order(request)
+            print(order)
             result = order_to_json(order)
-        except Exception:
+        except Exception as e:
             raise RepositoryError.save_operation_failed()
 
         return {"result": result}
@@ -125,6 +125,7 @@ class OrderController:
         try:
             order = OrderUseCase(order_gateway, product_gateway).confirm_order(order_id)
             result = order_with_qrcode_to_json(order, qr_code)
+
         except Exception:
             raise RepositoryError.save_operation_failed()
 
@@ -141,8 +142,7 @@ class OrderController:
         try:
             order = OrderUseCase(order_gateway, product_gateway).confirm_payment(order_id, status)
             result = order_to_json(order)
-        except Exception as e:
-            print(e)
+        except Exception:
             raise RepositoryError.save_operation_failed()
 
         return {"result": result}

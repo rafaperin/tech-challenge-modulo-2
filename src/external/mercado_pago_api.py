@@ -47,6 +47,7 @@ class MercadoPagoAPI:
 
         r = httpx.post(api_url, headers=headers, json=params)
         json_response = json.loads(r.content)
+
         return json_response["qr_data"]
 
     @staticmethod

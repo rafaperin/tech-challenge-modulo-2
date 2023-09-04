@@ -110,8 +110,7 @@ async def add_order_items(
         result = await OrderController.add_order_items(request, order_id)
     except DomainError:
         raise OrderItemError.modification_blocked()
-    except Exception as e:
-        print(e)
+    except Exception:
         raise RepositoryError.save_operation_failed()
 
     return result

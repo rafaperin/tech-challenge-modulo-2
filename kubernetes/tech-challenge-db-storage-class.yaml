@@ -2,7 +2,7 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: tech-challenge-db-storage-class
-provisioner: kubernetes.io/no-provisioner #responsabilidade do administrador de cluster garantir que os volumes de armazenamento estejam disponíveis no nó do Kubernetes.
+provisioner: kubernetes.io/no-provisioner
 reclaimPolicy: Retain
 allowVolumeExpansion: true
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
